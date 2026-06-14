@@ -1,0 +1,163 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Customer Economics Simulator — Zainab Abbas</title>
+<link rel="icon" type="image/png" href="https://zainababbas.com/favicon.png">
+<link rel="stylesheet" href="styles.css">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
+</head>
+<body>
+
+  <nav class="calc-nav">
+    <a href="https://zainababbas.com" class="logo" aria-label="Zainab Abbas — home"><span class="z">Z</span><span class="a">A</span></a>
+    <a href="https://zainababbas.com" class="nav-back">← Back to portfolio</a>
+  </nav>
+
+  <header class="hero">
+    <div class="hero-inner">
+      <div class="eyebrow">Zainab Abbas · Finance Tool</div>
+      <h1>Customer Economics <em>Simulator</em></h1>
+      <p class="lede">What is a customer actually worth — in revenue, and in profit? This tool models lifetime value, acquisition payback and the CLV:CAC ratio across subscription, service, retail, healthcare and project businesses, and shows how retention, pricing and referrals change the answer.</p>
+      <div class="byline">
+        <span><b>Works for:</b> SaaS · MSPs · healthcare · retail · services</span>
+        <span><b>Outputs:</b> Revenue &amp; profit LTV · CLV:CAC · payback</span>
+      </div>
+    </div>
+  </header>
+
+  <main class="wrap">
+    <div class="grid">
+
+      <!-- ============ INPUTS ============ -->
+      <section class="card" aria-label="Inputs">
+
+        <div class="group">
+          <div class="group-label">Business model</div>
+          <div class="model-chips" id="modelChips">
+            <button data-model="subscription" class="active">Subscription</button>
+            <button data-model="service">Service</button>
+            <button data-model="retail">Retail</button>
+            <button data-model="healthcare">Healthcare</button>
+            <button data-model="project">Project-based</button>
+            <button data-model="custom">Custom</button>
+          </div>
+        </div>
+
+        <div class="group">
+          <div class="group-label">Revenue</div>
+          <div class="field"><label for="arpc">Average revenue per customer</label>
+            <div class="input-shell"><span class="pre" id="curSym">AED</span><input class="has-pre" type="number" id="arpc" value="450" step="any"></div></div>
+          <div class="field"><label>Revenue frequency</label>
+            <div class="seg" id="freqSeg" role="group" aria-label="Frequency">
+              <button class="active" data-f="monthly">Monthly</button>
+              <button data-f="quarterly">Quarterly</button>
+              <button data-f="annually">Annually</button>
+              <button data-f="onetime">One-time</button>
+            </div>
+          </div>
+        </div>
+
+        <div class="group">
+          <div class="group-label">Profitability</div>
+          <div class="row2">
+            <div class="field"><label for="gm">Gross margin</label>
+              <div class="input-shell"><input class="has-suf" type="number" id="gm" value="80" step="any"><span class="suf">%</span></div></div>
+            <div class="field"><label for="net">Net margin</label>
+              <div class="input-shell"><input class="has-suf" type="number" id="net" value="22" step="any"><span class="suf">%</span></div></div>
+          </div>
+          <div class="field"><label for="svc">Average service cost <span class="hint">— % of revenue to serve</span></label>
+            <div class="input-shell"><input class="has-suf" type="number" id="svc" value="12" step="any"><span class="suf">%</span></div></div>
+        </div>
+
+        <div class="group">
+          <div class="group-label">Retention <span class="hint" style="text-transform:none;letter-spacing:0;font-weight:400">— enter either one</span></div>
+          <div class="row2">
+            <div class="field"><label for="churn">Customer churn</label>
+              <div class="input-shell"><input class="has-suf" type="number" id="churn" value="10" min="0" step="any"><span class="suf">% / yr</span></div></div>
+            <div class="field"><label for="lifespan">Avg lifespan</label>
+              <div class="input-shell"><input class="has-suf" type="number" id="lifespan" value="10" min="0" step="any"><span class="suf">yrs</span></div></div>
+          </div>
+        </div>
+
+        <div class="group">
+          <div class="group-label">Growth economics</div>
+          <div class="row2">
+            <div class="field"><label for="upsell">Upsell growth</label>
+              <div class="input-shell"><input class="has-suf" type="number" id="upsell" value="3" step="any"><span class="suf">% / yr</span></div></div>
+            <div class="field"><label for="price">Price increase</label>
+              <div class="input-shell"><input class="has-suf" type="number" id="price" value="3" step="any"><span class="suf">% / yr</span></div></div>
+          </div>
+          <div class="field"><label for="referral">Referral rate <span class="hint">— optional</span></label>
+            <div class="input-shell"><input class="has-suf" type="number" id="referral" value="4" min="0" step="any"><span class="suf">%</span></div></div>
+        </div>
+
+        <div class="group">
+          <div class="group-label">Acquisition</div>
+          <div class="field"><label for="cac">Customer acquisition cost (CAC)</label>
+            <div class="input-shell"><input type="number" id="cac" value="3000" step="any"></div></div>
+          <div class="field"><label for="currency">Currency</label>
+            <select id="currency">
+              <option value="AED |en-AE" selected>AED (د.إ)</option>
+              <option value="$|en-US">USD ($)</option>
+              <option value="€|de-DE">EUR (€)</option>
+              <option value="£|en-GB">GBP (£)</option>
+              <option value="₹|en-IN">INR (₹)</option>
+              <option value="SAR |ar-SA">SAR</option>
+            </select>
+          </div>
+        </div>
+
+        <button class="reset" id="reset">Reset to defaults</button>
+      </section>
+
+      <!-- ============ RESULTS ============ -->
+      <div class="results">
+
+        <div class="kpis" style="grid-template-columns:repeat(auto-fit,minmax(150px,1fr))">
+          <div class="kpi"><div class="k-label">Revenue LTV</div><div class="k-val" id="kRevLTV">—</div><div class="k-sub">per customer</div></div>
+          <div class="kpi"><div class="k-label">Profit LTV</div><div class="k-val" id="kProfLTV">—</div><div class="k-sub">net, per customer</div></div>
+          <div class="kpi"><div class="k-label">CLV : CAC</div><div class="k-val" id="kRatio">—</div><div class="k-sub">profit basis</div></div>
+          <div class="kpi"><div class="k-label">Payback</div><div class="k-val" id="kPayback">—</div><div class="k-sub">months to recover CAC</div></div>
+          <div class="kpi"><div class="k-label">Annual value</div><div class="k-val" id="kAnnual">—</div><div class="k-sub">profit / yr</div></div>
+          <div class="kpi"><div class="k-label">Retention impact</div><div class="k-val" id="kRetention">—</div><div class="k-sub">value per 1% less churn</div></div>
+        </div>
+
+        <div class="insight">
+          <div class="ins-eyebrow">Executive insight</div>
+          <div class="ins-body" id="insBody">—</div>
+          <span class="ins-flag neutral" id="insFlag">—</span>
+        </div>
+
+        <div class="chart-card">
+          <h3>Customer value over time</h3><div class="sub">Cumulative revenue &amp; profit · Year 1–5</div>
+          <div class="chart-box" style="height:300px"><canvas id="cValue"></canvas></div>
+        </div>
+
+        <div class="charts">
+          <div class="chart-card"><h3>Churn sensitivity</h3><div class="sub">Profit LTV at 5 / 10 / 15% churn</div><div class="chart-box"><canvas id="cChurn"></canvas></div></div>
+          <div class="chart-card"><h3>CAC vs lifetime value</h3><div class="sub">Acquisition cost vs profit LTV</div><div class="chart-box"><canvas id="cCac"></canvas></div></div>
+        </div>
+
+        <div class="table-card">
+          <div class="card-title"><span class="dot"></span>Cumulative value by year</div>
+          <table>
+            <thead><tr><th>Year</th><th>Cumulative revenue</th><th>Cumulative profit</th></tr></thead>
+            <tbody id="yearBody"></tbody>
+          </table>
+        </div>
+
+        <p class="note">Lifetime value sums each year's revenue weighted by the probability the customer is still active (from churn or lifespan), with annual value growing by upsell plus price increase and an optional referral uplift. Profit LTV applies your net margin; CAC payback uses contribution margin (gross margin less service cost). These are directional planning estimates, not a forecast of actual results or financial advice.</p>
+      </div>
+    </div>
+  </main>
+
+  <footer>
+    <span>Built by Zainab Abbas · CFO &amp; ACCA</span>
+    <span><a href="https://zainababbas.com" target="_blank" rel="noopener">zainababbas.com →</a></span>
+  </footer>
+
+  <script src="customer-economics.js"></script>
+</body>
+</html>

@@ -1,0 +1,211 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>EBITDA Scenario Planning Tool — Zainab Abbas</title>
+<link rel="icon" type="image/png" href="https://zainababbas.com/favicon.png">
+<link rel="stylesheet" href="styles.css">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
+</head>
+<body>
+
+  <nav class="calc-nav">
+    <a href="https://zainababbas.com" class="logo" aria-label="Zainab Abbas — home"><span class="z">Z</span><span class="a">A</span></a>
+    <a href="https://zainababbas.com" class="nav-back">← Back to portfolio</a>
+  </nav>
+
+  <header class="hero">
+    <div class="hero-inner">
+      <div class="eyebrow">Zainab Abbas · Finance Tool</div>
+      <h1>EBITDA Scenario <em>Planning Tool</em></h1>
+      <p class="lede">Model how growth, pricing, cost and strategic decisions move EBITDA and margin — then see which single action moves it most. Includes a CFO-style EBITDA bridge, a ranked list of profit levers, and conservative / expected / aggressive scenarios.</p>
+      <div class="byline">
+        <span><b>Outputs:</b> EBITDA · margin · bridge · levers</span>
+        <span><b>Use:</b> Any industry · any currency</span>
+      </div>
+    </div>
+  </header>
+
+  <main class="wrap">
+    <div class="grid">
+
+      <!-- ============ INPUTS ============ -->
+      <section class="card" aria-label="Inputs">
+
+        <div class="scenario">
+          <div class="group-label">Scenario</div>
+          <div class="scen-name" id="scenName">Expected</div>
+          <input type="range" id="scenSlider" min="0" max="2" step="1" value="1" aria-label="Scenario">
+          <div class="scen-ticks" id="scenTicks"><span>Conservative</span><span class="on">Expected</span><span>Aggressive</span></div>
+        </div>
+
+        <!-- Section 1 -->
+        <div class="group">
+          <div class="group-label">Current performance (annual)</div>
+          <div class="field"><label for="rev">Revenue</label>
+            <div class="input-shell"><span class="pre" id="curSym">AED</span><input class="has-pre" type="number" id="rev" value="10000000" step="any"></div></div>
+          <div class="row2">
+            <div class="field"><label for="gm">Gross margin</label>
+              <div class="input-shell"><input class="has-suf" type="number" id="gm" value="55" step="any"><span class="suf">%</span></div></div>
+            <div class="field"><label for="pay">Payroll cost</label>
+              <div class="input-shell"><input type="number" id="pay" value="2800000" step="any"></div></div>
+          </div>
+          <div class="row2">
+            <div class="field"><label for="opex">Operating expenses</label>
+              <div class="input-shell"><input type="number" id="opex" value="700000" step="any"></div></div>
+            <div class="field"><label for="fixed">Other fixed costs</label>
+              <div class="input-shell"><input type="number" id="fixed" value="200000" step="any"></div></div>
+          </div>
+        </div>
+
+        <!-- Section 2 -->
+        <div class="group">
+          <div class="group-label">Growth assumptions</div>
+          <div class="field">
+            <label>Revenue growth <b id="revGrowthVal" style="color:var(--gold-deep);float:right">+6%</b></label>
+            <input type="range" id="revGrowth" min="-20" max="50" step="1" value="6">
+          </div>
+          <div class="row2">
+            <div class="field"><label for="pricing">Price increase</label>
+              <div class="input-shell"><input class="has-suf" type="number" id="pricing" value="3" step="any"><span class="suf">%</span></div></div>
+            <div class="field"><label for="customer">Customer growth</label>
+              <div class="input-shell"><input class="has-suf" type="number" id="customer" value="4" step="any"><span class="suf">%</span></div></div>
+          </div>
+          <div class="field"><label for="newStream">New revenue stream <span class="hint">— annual</span></label>
+            <div class="input-shell"><input type="number" id="newStream" value="0" step="any"></div></div>
+        </div>
+
+        <!-- Section 3 -->
+        <div class="group">
+          <div class="group-label">Cost assumptions</div>
+          <div class="row2">
+            <div class="field"><label for="payg">Payroll growth</label>
+              <div class="input-shell"><input class="has-suf" type="number" id="payg" value="6" step="any"><span class="suf">%</span></div></div>
+            <div class="field"><label for="rent">Rent / fixed increase</label>
+              <div class="input-shell"><input class="has-suf" type="number" id="rent" value="4" step="any"><span class="suf">%</span></div></div>
+          </div>
+          <div class="row2">
+            <div class="field"><label for="infl">Inflation</label>
+              <div class="input-shell"><input class="has-suf" type="number" id="infl" value="3" step="any"><span class="suf">%</span></div></div>
+            <div class="field"><label for="mkt">Marketing increase</label>
+              <div class="input-shell"><input class="has-suf" type="number" id="mkt" value="5" step="any"><span class="suf">%</span></div></div>
+          </div>
+          <div class="field"><label for="tech">Technology spend increase</label>
+            <div class="input-shell"><input class="has-suf" type="number" id="tech" value="5" step="any"><span class="suf">%</span></div></div>
+        </div>
+
+        <!-- Section 4 -->
+        <div class="group">
+          <div class="group-label">Strategic decisions</div>
+          <div class="toggles">
+            <label class="toggle"><input type="checkbox" id="tg_hire"><span class="switch"></span><span class="t-text">Hire new employees<small>Adds to annual payroll.</small></span></label>
+            <div class="field" id="wrap_hire" style="display:none;margin:6px 0 14px"><div class="input-shell"><input type="number" id="hireAmt" value="300000" step="any"></div></div>
+
+            <label class="toggle"><input type="checkbox" id="tg_loc"><span class="switch"></span><span class="t-text">Open new location<small>Adds revenue, plus ~20% as overhead.</small></span></label>
+            <div class="field" id="wrap_loc" style="display:none;margin:6px 0 14px"><div class="input-shell"><input type="number" id="locRev" value="1500000" step="any"></div></div>
+
+            <label class="toggle"><input type="checkbox" id="tg_svc"><span class="switch"></span><span class="t-text">Launch new service<small>Adds recurring revenue at current margin.</small></span></label>
+            <div class="field" id="wrap_svc" style="display:none;margin:6px 0 14px"><div class="input-shell"><input type="number" id="svcRev" value="800000" step="any"></div></div>
+
+            <label class="toggle"><input type="checkbox" id="tg_invest"><span class="switch"></span><span class="t-text">Invest in technology<small>Year-1 cost; ~30% annual saving after.</small></span></label>
+            <div class="field" id="wrap_invest" style="display:none;margin:6px 0 14px"><div class="input-shell"><input type="number" id="investAmt" value="400000" step="any"></div></div>
+
+            <label class="toggle"><input type="checkbox" id="tg_out"><span class="switch"></span><span class="t-text">Outsource a function<small>Cuts payroll; ~70% returns as opex.</small></span></label>
+            <div class="field" id="wrap_out" style="display:none;margin:6px 0 14px"><div class="input-shell"><input type="number" id="outAmt" value="600000" step="any"></div></div>
+
+            <label class="toggle"><input type="checkbox" id="tg_cut"><span class="switch"></span><span class="t-text">Reduce headcount<small>Reduces annual payroll.</small></span></label>
+            <div class="field" id="wrap_cut" style="display:none;margin:6px 0 14px"><div class="input-shell"><input type="number" id="cutAmt" value="500000" step="any"></div></div>
+          </div>
+        </div>
+
+        <div class="group">
+          <div class="row2">
+            <div class="field"><label for="targetMargin">Target margin</label>
+              <div class="input-shell"><input class="has-suf" type="number" id="targetMargin" value="25" step="any"><span class="suf">%</span></div></div>
+            <div class="field"><label for="currency">Currency</label>
+              <select id="currency">
+                <option value="AED |en-AE" selected>AED (د.إ)</option>
+                <option value="$|en-US">USD ($)</option>
+                <option value="€|de-DE">EUR (€)</option>
+                <option value="£|en-GB">GBP (£)</option>
+                <option value="₹|en-IN">INR (₹)</option>
+                <option value="SAR |ar-SA">SAR</option>
+              </select>
+            </div>
+          </div>
+        </div>
+
+        <button class="reset" id="reset">Reset to defaults</button>
+      </section>
+
+      <!-- ============ RESULTS ============ -->
+      <div class="results">
+
+        <div class="kpis">
+          <div class="kpi"><div class="k-label">Current EBITDA</div><div class="k-val" id="kCurEbitda">—</div><div class="k-sub">today</div></div>
+          <div class="kpi"><div class="k-label">Future EBITDA</div><div class="k-val" id="kFutEbitda">—</div><div class="k-sub">planning year</div></div>
+          <div class="kpi"><div class="k-label">EBITDA change</div><div class="k-val" id="kChange">—</div><div class="k-sub">vs. current</div></div>
+          <div class="kpi"><div class="k-label">Future margin</div><div class="k-val" id="kFutMargin">—</div><div class="k-sub" id="kFutMarginSub">vs current</div></div>
+        </div>
+
+        <div class="insight">
+          <div class="ins-eyebrow">Executive insight</div>
+          <div class="ins-body" id="insBody">—</div>
+          <span class="ins-flag neutral" id="insFlag">—</span>
+        </div>
+
+        <div class="chart-card">
+          <h3>EBITDA bridge</h3><div class="sub">Current → future · what drives the change</div>
+          <div class="chart-box" style="height:300px"><canvas id="cBridge"></canvas></div>
+        </div>
+
+        <!-- highest impact lever -->
+        <div class="insight" style="background:linear-gradient(180deg,#fbf6e6,#fffdf8)">
+          <div class="ins-eyebrow">🏆 Highest-impact action</div>
+          <div class="ins-body" style="font-size:20px"><b id="topLever">—</b> · <span id="topLeverVal" style="color:var(--gold-deep)">—</span> EBITDA</div>
+        </div>
+
+        <div class="table-card">
+          <div class="card-title"><span class="dot"></span>EBITDA levers — ranked by impact</div>
+          <table>
+            <thead><tr><th>Lever</th><th>EBITDA impact</th></tr></thead>
+            <tbody id="leverBody"></tbody>
+          </table>
+        </div>
+
+        <div class="charts">
+          <div class="chart-card"><h3>Scenario comparison</h3><div class="sub">EBITDA by scenario</div><div class="chart-box"><canvas id="cScen"></canvas></div></div>
+          <div class="chart-card"><h3>EBITDA trend</h3><div class="sub">24-month run-rate</div><div class="chart-box"><canvas id="cTrend"></canvas></div></div>
+        </div>
+
+        <div class="table-card">
+          <div class="card-title"><span class="dot"></span>Scenario detail</div>
+          <table>
+            <thead><tr><th>Scenario</th><th>Revenue</th><th>EBITDA</th><th>Margin</th><th>Op. cash</th></tr></thead>
+            <tbody id="scenBody"></tbody>
+          </table>
+        </div>
+
+        <div class="table-card">
+          <div class="card-title"><span class="dot"></span>Revenue required for target margin</div>
+          <table>
+            <thead><tr><th>Target</th><th>Revenue required</th></tr></thead>
+            <tbody id="revReqBody"></tbody>
+          </table>
+          <p class="note" id="costReq" style="margin-top:16px">—</p>
+        </div>
+
+        <p class="note">EBITDA is gross profit less payroll, operating expenses and fixed costs. Price increases flow through at full margin; volume growth scales revenue and cost of sales together. Operating-expense growth is split across general inflation, marketing and technology; "operating cash" in the scenario table is shown as EBITDA. These are directional planning estimates, not a forecast of actual results or financial advice.</p>
+      </div>
+    </div>
+  </main>
+
+  <footer>
+    <span>Built by Zainab Abbas · CFO &amp; ACCA</span>
+    <span><a href="https://zainababbas.com" target="_blank" rel="noopener">zainababbas.com →</a></span>
+  </footer>
+
+  <script src="ebitda-simulator.js"></script>
+</body>
+</html>

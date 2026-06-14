@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Pricing Impact Simulator — Zainab Abbas</title>
+<link rel="icon" type="image/png" href="https://zainababbas.com/favicon.png">
+<link rel="stylesheet" href="styles.css">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
+</head>
+<body>
+
+  <nav class="calc-nav">
+    <a href="https://zainababbas.com" class="logo" aria-label="Zainab Abbas — home"><span class="z">Z</span><span class="a">A</span></a>
+    <a href="https://zainababbas.com" class="nav-back">← Back to portfolio</a>
+  </nav>
+
+  <header class="hero">
+    <div class="hero-inner">
+      <div class="eyebrow">Zainab Abbas · Finance Tool</div>
+      <h1>Pricing Impact <em>Simulator</em></h1>
+      <p class="lede">Most businesses underprice. Model how a price change flows through customer attrition to revenue, gross profit and EBITDA — and find the increase that maximises profit, not just revenue.</p>
+      <div class="byline"><span><b>Outputs:</b> Revenue · gross profit · EBITDA · optimal price</span><span><b>Use:</b> Any industry · any currency</span></div>
+    </div>
+  </header>
+
+  <main class="wrap">
+    <div class="grid">
+      <section class="card" aria-label="Inputs">
+        <div class="group">
+          <div class="group-label">Current situation</div>
+          <div class="row2">
+            <div class="field"><label for="customers">Customers</label><div class="input-shell"><input type="number" id="customers" value="500" step="1"></div></div>
+            <div class="field"><label for="avgPrice">Average price</label><div class="input-shell"><span class="pre" id="curSym">AED</span><input class="has-pre" type="number" id="avgPrice" value="2000" step="any"></div></div>
+          </div>
+          <div class="row2">
+            <div class="field"><label for="gm">Gross margin</label><div class="input-shell"><input class="has-suf" type="number" id="gm" value="60" step="any"><span class="suf">%</span></div></div>
+            <div class="field"><label for="churn">Churn</label><div class="input-shell"><input class="has-suf" type="number" id="churn" value="8" step="any"><span class="suf">%</span></div></div>
+          </div>
+          <div class="field"><label for="fixed">Fixed costs <span class="hint">— annual</span></label><div class="input-shell"><input type="number" id="fixed" value="400000" step="any"></div></div>
+        </div>
+
+        <div class="group">
+          <div class="group-label">Proposed changes</div>
+          <div class="row2">
+            <div class="field"><label for="priceInc">Price increase</label><div class="input-shell"><input class="has-suf" type="number" id="priceInc" value="10" step="any"><span class="suf">%</span></div></div>
+            <div class="field"><label for="custLoss">Expected customer loss</label><div class="input-shell"><input class="has-suf" type="number" id="custLoss" value="12" step="any"><span class="suf">%</span></div></div>
+          </div>
+          <div class="field"><label for="costInfl">Cost inflation</label><div class="input-shell"><input class="has-suf" type="number" id="costInfl" value="3" step="any"><span class="suf">%</span></div></div>
+          <div class="field"><label for="currency">Currency</label>
+            <select id="currency"><option value="AED |en-AE" selected>AED (د.إ)</option><option value="$|en-US">USD ($)</option><option value="€|de-DE">EUR (€)</option><option value="£|en-GB">GBP (£)</option><option value="₹|en-IN">INR (₹)</option><option value="SAR |ar-SA">SAR</option></select></div>
+        </div>
+
+        <button class="reset" id="reset">Reset to defaults</button>
+      </section>
+
+      <div class="results">
+        <div class="kpis" style="grid-template-columns:repeat(auto-fit,minmax(150px,1fr))">
+          <div class="kpi"><div class="k-label">Revenue (after)</div><div class="k-val" id="kRevA">—</div><div class="k-sub" id="kRevASub">before</div></div>
+          <div class="kpi"><div class="k-label">Gross profit (after)</div><div class="k-val" id="kGpA">—</div><div class="k-sub" id="kGpASub">before</div></div>
+          <div class="kpi"><div class="k-label">EBITDA (after)</div><div class="k-val" id="kEbA">—</div><div class="k-sub" id="kEbASub">before</div></div>
+          <div class="kpi"><div class="k-label">Optimal increase</div><div class="k-val" id="kOpt">—</div><div class="k-sub">max EBITDA</div></div>
+        </div>
+
+        <div class="insight" style="background:linear-gradient(180deg,#fbf6e6,#fffdf8)">
+          <div class="ins-eyebrow">🏆 Profit-maximising move</div>
+          <div class="ins-body" style="font-size:20px"><b id="topPrice">—</b> · <span id="topPriceVal" style="color:var(--gold-deep)">—</span> EBITDA</div>
+        </div>
+
+        <div class="insight">
+          <div class="ins-eyebrow">Executive insight</div>
+          <div class="ins-body" id="insBody">—</div>
+          <span class="ins-flag neutral" id="insFlag">—</span>
+        </div>
+
+        <div class="charts">
+          <div class="chart-card"><h3>Price elasticity curve</h3><div class="sub">EBITDA vs price increase</div><div class="chart-box"><canvas id="cElas"></canvas></div></div>
+          <div class="chart-card"><h3>Revenue vs churn</h3><div class="sub">Revenue as customer loss rises</div><div class="chart-box"><canvas id="cChurn"></canvas></div></div>
+        </div>
+
+        <div class="table-card">
+          <div class="card-title"><span class="dot"></span>Scenario table</div>
+          <table><thead><tr><th>Price increase</th><th>Customers</th><th>EBITDA</th></tr></thead><tbody id="scenBody"></tbody></table>
+        </div>
+
+        <p class="note">Demand is modelled linearly: the expected customer loss at your proposed increase sets the loss rate per 1% of price. Price increases flow through at full margin; cost inflation raises unit cost. The optimal increase is the one that maximises EBITDA, which is often higher than instinct suggests. Directional estimates, not financial advice.</p>
+      </div>
+    </div>
+  </main>
+
+  <footer>
+    <span>Built by Zainab Abbas · CFO &amp; ACCA</span>
+    <span><a href="https://zainababbas.com" target="_blank" rel="noopener">zainababbas.com →</a></span>
+  </footer>
+
+  <script src="pricing-impact.js"></script>
+</body>
+</html>

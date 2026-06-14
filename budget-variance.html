@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Budget Variance Analyzer — Zainab Abbas</title>
+<link rel="icon" type="image/png" href="https://zainababbas.com/favicon.png">
+<link rel="stylesheet" href="styles.css">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
+</head>
+<body>
+
+  <nav class="calc-nav">
+    <a href="https://zainababbas.com" class="logo" aria-label="Zainab Abbas — home"><span class="z">Z</span><span class="a">A</span></a>
+    <a href="https://zainababbas.com" class="nav-back">← Back to portfolio</a>
+  </nav>
+
+  <header class="hero">
+    <div class="hero-inner">
+      <div class="eyebrow">Zainab Abbas · Finance Tool</div>
+      <h1>Budget Variance <em>Analyzer</em></h1>
+      <p class="lede">Compare budget to actual, see exactly why EBITDA missed (or beat) plan, and pinpoint the single largest driver. Built to turn a variance report into a clear set of management actions.</p>
+      <div class="byline"><span><b>Outputs:</b> Variance by line · EBITDA bridge · heat map</span><span><b>Use:</b> Any industry · any currency</span></div>
+    </div>
+  </header>
+
+  <main class="wrap">
+    <div class="grid">
+      <section class="card" aria-label="Inputs">
+
+        <div class="group">
+          <div class="group-label">Budget</div>
+          <div class="field"><label for="bRev">Budget revenue</label><div class="input-shell"><span class="pre" id="curSym">AED</span><input class="has-pre" type="number" id="bRev" value="1000000" step="any"></div></div>
+          <div class="row2">
+            <div class="field"><label for="bPay">Payroll</label><div class="input-shell"><input type="number" id="bPay" value="300000" step="any"></div></div>
+            <div class="field"><label for="bMkt">Marketing</label><div class="input-shell"><input type="number" id="bMkt" value="120000" step="any"></div></div>
+          </div>
+          <div class="row2">
+            <div class="field"><label for="bRent">Rent</label><div class="input-shell"><input type="number" id="bRent" value="80000" step="any"></div></div>
+            <div class="field"><label for="bOth">Other expenses</label><div class="input-shell"><input type="number" id="bOth" value="100000" step="any"></div></div>
+          </div>
+        </div>
+
+        <div class="group">
+          <div class="group-label">Actual</div>
+          <div class="field"><label for="aRev">Actual revenue</label><div class="input-shell"><input type="number" id="aRev" value="900000" step="any"></div></div>
+          <div class="row2">
+            <div class="field"><label for="aPay">Payroll</label><div class="input-shell"><input type="number" id="aPay" value="330000" step="any"></div></div>
+            <div class="field"><label for="aMkt">Marketing</label><div class="input-shell"><input type="number" id="aMkt" value="140000" step="any"></div></div>
+          </div>
+          <div class="row2">
+            <div class="field"><label for="aRent">Rent</label><div class="input-shell"><input type="number" id="aRent" value="80000" step="any"></div></div>
+            <div class="field"><label for="aOth">Other expenses</label><div class="input-shell"><input type="number" id="aOth" value="110000" step="any"></div></div>
+          </div>
+        </div>
+
+        <div class="group">
+          <div class="group-label">Analysis</div>
+          <div class="field"><label>Variance threshold</label>
+            <div class="seg" id="threshSeg"><button data-t="5">5%</button><button class="active" data-t="10">10%</button><button data-t="15">15%</button></div></div>
+          <div class="field"><label>Period</label>
+            <div class="seg" id="periodSeg"><button class="active" data-p="monthly">Monthly</button><button data-p="quarterly">Quarterly</button><button data-p="annual">Annual</button></div></div>
+          <div class="field"><label for="currency">Currency</label>
+            <select id="currency"><option value="AED |en-AE" selected>AED (د.إ)</option><option value="$|en-US">USD ($)</option><option value="€|de-DE">EUR (€)</option><option value="£|en-GB">GBP (£)</option><option value="₹|en-IN">INR (₹)</option><option value="SAR |ar-SA">SAR</option></select></div>
+        </div>
+
+        <button class="reset" id="reset">Reset to defaults</button>
+      </section>
+
+      <div class="results">
+        <div class="kpis">
+          <div class="kpi"><div class="k-label">Budget EBITDA</div><div class="k-val" id="kBudEB">—</div><div class="k-sub">plan</div></div>
+          <div class="kpi"><div class="k-label">Actual EBITDA</div><div class="k-val" id="kActEB">—</div><div class="k-sub">result</div></div>
+          <div class="kpi"><div class="k-label">EBITDA variance</div><div class="k-val" id="kEBVar">—</div><div class="k-sub" id="kEBVarSub">vs budget</div></div>
+          <div class="kpi"><div class="k-label">Revenue variance</div><div class="k-val" id="kRevVar">—</div><div class="k-sub">vs budget</div></div>
+        </div>
+
+        <div class="insight">
+          <div class="ins-eyebrow">Executive insight</div>
+          <div class="ins-body" id="insBody">—</div>
+          <span class="ins-flag neutral" id="insFlag">—</span>
+        </div>
+
+        <div class="insight" style="background:linear-gradient(180deg,#fbf6e6,#fffdf8)">
+          <div class="ins-eyebrow">🏆 Largest profitability driver</div>
+          <div class="ins-body" style="font-size:20px"><b id="topDriver">—</b> · <span id="topDriverVal" style="color:var(--gold-deep)">—</span> EBITDA impact</div>
+        </div>
+
+        <div class="chart-card"><h3>EBITDA bridge</h3><div class="sub">Budget → actual · by line</div><div class="chart-box" style="height:300px"><canvas id="cWf"></canvas></div></div>
+
+        <div class="table-card">
+          <div class="card-title"><span class="dot"></span>Variance heat map</div>
+          <div class="heat-grid" id="heatmap"></div>
+        </div>
+
+        <div class="table-card">
+          <div class="card-title"><span class="dot"></span>Variance by line</div>
+          <table><thead><tr><th>Line</th><th>Budget</th><th>Actual</th><th>Variance</th><th>%</th></tr></thead><tbody id="varBody"></tbody></table>
+        </div>
+
+        <p class="note">Favourable means revenue above budget or expenses below budget (green); unfavourable is the reverse (red). The EBITDA bridge attributes the total EBITDA variance across each line. These are directional analyses, not a forecast of actual results or financial advice.</p>
+      </div>
+    </div>
+  </main>
+
+  <footer>
+    <span>Built by Zainab Abbas · CFO &amp; ACCA</span>
+    <span><a href="https://zainababbas.com" target="_blank" rel="noopener">zainababbas.com →</a></span>
+  </footer>
+
+  <script src="budget-variance.js"></script>
+</body>
+</html>

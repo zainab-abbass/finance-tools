@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Strategic Growth Capacity Simulator — Zainab Abbas</title>
+<link rel="icon" type="image/png" href="https://zainababbas.com/favicon.png">
+<link rel="stylesheet" href="styles.css">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
+</head>
+<body>
+
+  <nav class="calc-nav">
+    <a href="https://zainababbas.com" class="logo" aria-label="Zainab Abbas — home"><span class="z">Z</span><span class="a">A</span></a>
+    <a href="https://zainababbas.com" class="nav-back">← Back to portfolio</a>
+  </nav>
+
+  <header class="hero">
+    <div class="hero-inner">
+      <div class="eyebrow">Zainab Abbas · Finance Tool</div>
+      <h1>Strategic Growth <em>Capacity Simulator</em></h1>
+      <p class="lede">Most businesses ask "can we grow?" A CFO asks "can we afford to grow?" This tool tests a growth plan against your cash, models the 24-month cash and EBITDA impact, and tells you whether you can fund it internally or need a facility.</p>
+      <div class="byline"><span><b>Outputs:</b> Funding gap · cash · EBITDA · payback · ROI</span><span><b>Use:</b> Any industry · any currency</span></div>
+    </div>
+  </header>
+
+  <main class="wrap">
+    <div class="grid">
+      <section class="card" aria-label="Inputs">
+        <div class="group">
+          <div class="group-label">Current business</div>
+          <div class="field"><label for="rev">Revenue</label><div class="input-shell"><span class="pre" id="curSym">AED</span><input class="has-pre" type="number" id="rev" value="12000000" step="any"></div></div>
+          <div class="row2">
+            <div class="field"><label for="gm">Gross margin</label><div class="input-shell"><input class="has-suf" type="number" id="gm" value="55" step="any"><span class="suf">%</span></div></div>
+            <div class="field"><label for="ebitda">EBITDA margin</label><div class="input-shell"><input class="has-suf" type="number" id="ebitda" value="18" step="any"><span class="suf">%</span></div></div>
+          </div>
+          <div class="row2">
+            <div class="field"><label for="cash">Cash balance</label><div class="input-shell"><input type="number" id="cash" value="1000000" step="any"></div></div>
+            <div class="field"><label for="employees">Current employees</label><div class="input-shell"><input type="number" id="employees" value="45" step="1"></div></div>
+          </div>
+        </div>
+
+        <div class="group">
+          <div class="group-label">Growth plan</div>
+          <div class="row2">
+            <div class="field"><label for="growth">Target revenue growth</label><div class="input-shell"><input class="has-suf" type="number" id="growth" value="35" step="any"><span class="suf">%</span></div></div>
+            <div class="field"><label for="newHires">New hires</label><div class="input-shell"><input type="number" id="newHires" value="10" step="1"></div></div>
+          </div>
+          <div class="field"><label for="marketing">Marketing investment</label><div class="input-shell"><input type="number" id="marketing" value="800000" step="any"></div></div>
+          <div class="row2">
+            <div class="field"><label for="tech">Technology investment</label><div class="input-shell"><input type="number" id="tech" value="700000" step="any"></div></div>
+            <div class="field"><label for="office">Office expansion</label><div class="input-shell"><input type="number" id="office" value="1200000" step="any"></div></div>
+          </div>
+        </div>
+
+        <div class="group">
+          <div class="group-label">Funding available</div>
+          <div class="row2">
+            <div class="field"><label for="bank">Bank facility</label><div class="input-shell"><input type="number" id="bank" value="1500000" step="any"></div></div>
+            <div class="field"><label for="shareholder">Shareholder funding</label><div class="input-shell"><input type="number" id="shareholder" value="0" step="any"></div></div>
+          </div>
+          <div class="field"><label for="currency">Currency</label>
+            <select id="currency"><option value="AED |en-AE" selected>AED (د.إ)</option><option value="$|en-US">USD ($)</option><option value="€|de-DE">EUR (€)</option><option value="£|en-GB">GBP (£)</option><option value="₹|en-IN">INR (₹)</option><option value="SAR |ar-SA">SAR</option></select></div>
+          <p class="note" style="margin-top:6px">Existing cash is the cash balance above; total funding adds the bank facility and shareholder funding.</p>
+        </div>
+
+        <button class="reset" id="reset">Reset to defaults</button>
+      </section>
+
+      <div class="results">
+
+        <div class="insight" style="background:linear-gradient(180deg,#fbf6e6,#fffdf8)">
+          <div class="ins-eyebrow">Can you fund growth internally?</div>
+          <div class="ins-body" style="font-size:30px;font-weight:700" id="fundResult">—</div>
+          <span class="ins-flag neutral" id="fundFlag">—</span>
+        </div>
+
+        <div class="kpis" style="grid-template-columns:repeat(auto-fit,minmax(150px,1fr))">
+          <div class="kpi"><div class="k-label">Total investment</div><div class="k-val" id="kInvest">—</div><div class="k-sub">growth plan</div></div>
+          <div class="kpi"><div class="k-label">Additional funding</div><div class="k-val" id="kFunding">—</div><div class="k-sub" id="kFundingSub">required</div></div>
+          <div class="kpi"><div class="k-label">Future EBITDA</div><div class="k-val" id="kFutEB">—</div><div class="k-sub" id="kFutEBSub">vs current</div></div>
+          <div class="kpi"><div class="k-label">Payback</div><div class="k-val" id="kPayback">—</div><div class="k-sub">months</div></div>
+          <div class="kpi"><div class="k-label">Return on investment</div><div class="k-val" id="kRoi">—</div><div class="k-sub">annual</div></div>
+        </div>
+
+        <div class="insight">
+          <div class="ins-eyebrow">Executive insight</div>
+          <div class="ins-body" id="insBody">—</div>
+        </div>
+
+        <div class="chart-card">
+          <h3>Cash balance trend</h3><div class="sub">24 months · dashed red = zero line</div>
+          <div class="chart-box" style="height:300px"><canvas id="cCash"></canvas></div>
+        </div>
+
+        <div class="charts">
+          <div class="chart-card"><h3>Revenue vs investment</h3><div class="sub">Revenue run-rate &amp; cash invested</div><div class="chart-box"><canvas id="cRevInv"></canvas></div></div>
+          <div class="chart-card"><h3>EBITDA trend</h3><div class="sub">24-month run-rate</div><div class="chart-box"><canvas id="cEB"></canvas></div></div>
+        </div>
+
+        <p class="note">A 24-month monthly model: revenue ramps to the growth target over the first year; new-hire cost is derived from your current cost-per-employee and phases in over six months; technology and office spend hit cash in the first quarter; marketing is spent across year one. "Fundable internally" means cash stays positive on existing reserves alone. Payback is total investment divided by the steady-state monthly EBITDA uplift. Directional estimates, not financial advice.</p>
+      </div>
+    </div>
+  </main>
+
+  <footer>
+    <span>Built by Zainab Abbas · CFO &amp; ACCA</span>
+    <span><a href="https://zainababbas.com" target="_blank" rel="noopener">zainababbas.com →</a></span>
+  </footer>
+
+  <script src="growth-capacity.js"></script>
+</body>
+</html>

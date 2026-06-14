@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Headcount Planning Simulator — Zainab Abbas</title>
+<link rel="icon" type="image/png" href="https://zainababbas.com/favicon.png">
+<link rel="stylesheet" href="styles.css">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
+</head>
+<body>
+
+  <nav class="calc-nav">
+    <a href="https://zainababbas.com" class="logo" aria-label="Zainab Abbas — home"><span class="z">Z</span><span class="a">A</span></a>
+    <a href="https://zainababbas.com" class="nav-back">← Back to portfolio</a>
+  </nav>
+
+  <header class="hero">
+    <div class="hero-inner">
+      <div class="eyebrow">Zainab Abbas · Finance Tool</div>
+      <h1>Headcount Planning <em>Simulator</em></h1>
+      <p class="lede">People are 40–70% of most cost bases. Model a hiring plan month by month, see what it does to payroll, the payroll-to-revenue ratio and EBITDA — and whether the revenue plan can actually afford it.</p>
+      <div class="byline"><span><b>Outputs:</b> Payroll · ratio · EBITDA · affordability</span><span><b>Use:</b> Any industry · any currency</span></div>
+    </div>
+  </header>
+
+  <main class="wrap">
+    <div class="grid">
+      <section class="card" aria-label="Inputs">
+
+        <div class="group">
+          <div class="group-label">Current team</div>
+          <div class="row2">
+            <div class="field"><label for="curEmp">Current employees</label><div class="input-shell"><input type="number" id="curEmp" value="40" step="1"></div></div>
+            <div class="field"><label for="avgSalary">Average salary</label><div class="input-shell"><span class="pre" id="curSym">AED</span><input class="has-pre" type="number" id="avgSalary" value="120000" step="any"></div></div>
+          </div>
+          <div class="row2">
+            <div class="field"><label for="benefits">Benefits</label><div class="input-shell"><input class="has-suf" type="number" id="benefits" value="12" step="any"><span class="suf">%</span></div></div>
+            <div class="field"><label for="bonus">Bonus</label><div class="input-shell"><input class="has-suf" type="number" id="bonus" value="8" step="any"><span class="suf">%</span></div></div>
+          </div>
+          <div class="field"><label for="visaIns">Visa / insurance per employee</label><div class="input-shell"><input type="number" id="visaIns" value="8000" step="any"></div></div>
+        </div>
+
+        <div class="group">
+          <div class="group-label">Hiring plan</div>
+          <div id="hireRows"></div>
+          <button class="add-hire" id="addHire">+ Add hire</button>
+        </div>
+
+        <div class="group">
+          <div class="group-label">Revenue &amp; cost base</div>
+          <div class="row2">
+            <div class="field"><label for="curRev">Current revenue</label><div class="input-shell"><input type="number" id="curRev" value="18000000" step="any"></div></div>
+            <div class="field"><label for="growth">Expected growth</label><div class="input-shell"><input class="has-suf" type="number" id="growth" value="15" step="any"><span class="suf">%</span></div></div>
+          </div>
+          <div class="field"><label for="otherCosts">Other operating costs <span class="hint">— annual, non-payroll</span></label><div class="input-shell"><input type="number" id="otherCosts" value="6000000" step="any"></div></div>
+          <div class="field"><label for="currency">Currency</label>
+            <select id="currency"><option value="AED |en-AE" selected>AED (د.إ)</option><option value="$|en-US">USD ($)</option><option value="€|de-DE">EUR (€)</option><option value="£|en-GB">GBP (£)</option><option value="₹|en-IN">INR (₹)</option><option value="SAR |ar-SA">SAR</option></select></div>
+        </div>
+
+        <button class="reset" id="reset">Reset to defaults</button>
+      </section>
+
+      <div class="results">
+        <div class="kpis" style="grid-template-columns:repeat(auto-fit,minmax(150px,1fr))">
+          <div class="kpi"><div class="k-label">Future payroll</div><div class="k-val" id="kFutPay">—</div><div class="k-sub" id="kFutPaySub">added</div></div>
+          <div class="kpi"><div class="k-label">Payroll / revenue</div><div class="k-val" id="kRatio">—</div><div class="k-sub" id="kRatioSub">vs current</div></div>
+          <div class="kpi"><div class="k-label">Revenue / employee</div><div class="k-val" id="kRevEmp">—</div><div class="k-sub">future</div></div>
+          <div class="kpi"><div class="k-label">Future EBITDA</div><div class="k-val" id="kFutEB">—</div><div class="k-sub" id="kFutEBSub">vs current</div></div>
+        </div>
+
+        <div class="insight" style="background:linear-gradient(180deg,#fbf6e6,#fffdf8)">
+          <div class="ins-eyebrow">Hiring affordability</div>
+          <span class="ins-flag neutral" id="scoreFlag" style="margin-top:0;font-size:14px">—</span>
+        </div>
+
+        <div class="insight">
+          <div class="ins-eyebrow">Executive insight</div>
+          <div class="ins-body" id="insBody">—</div>
+        </div>
+
+        <div class="charts">
+          <div class="chart-card"><h3>Payroll growth</h3><div class="sub">Monthly · 12 months</div><div class="chart-box"><canvas id="cPay"></canvas></div></div>
+          <div class="chart-card"><h3>Revenue vs payroll</h3><div class="sub">Monthly · 12 months</div><div class="chart-box"><canvas id="cRevPay"></canvas></div></div>
+        </div>
+
+        <p class="note">Fully-loaded cost per hire is salary plus benefits, bonus and visa/insurance. Future payroll is the steady-state annual run-rate once all planned hires are in; the chart shows the month-by-month build based on each hire's start month. EBITDA holds other operating costs constant. These are directional estimates, not financial advice.</p>
+      </div>
+    </div>
+  </main>
+
+  <footer>
+    <span>Built by Zainab Abbas · CFO &amp; ACCA</span>
+    <span><a href="https://zainababbas.com" target="_blank" rel="noopener">zainababbas.com →</a></span>
+  </footer>
+
+  <script src="headcount-planning.js"></script>
+</body>
+</html>
