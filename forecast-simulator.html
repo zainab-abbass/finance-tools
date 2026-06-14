@@ -1,0 +1,163 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Sales Forecast Simulator — Zainab Abbas</title>
+<link rel="icon" type="image/png" href="https://zainababbas.com/favicon.png">
+<link rel="stylesheet" href="styles.css">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
+</head>
+<body>
+
+  <nav class="calc-nav">
+    <a href="https://zainababbas.com" class="logo" aria-label="Zainab Abbas — home"><span class="z">Z</span><span class="a">A</span></a>
+    <a href="https://zainababbas.com" class="nav-back">← Back to portfolio</a>
+  </nav>
+
+  <!-- ===== DARK HERO ===== -->
+  <header class="hero">
+    <div class="hero-inner">
+      <div class="eyebrow">Zainab Abbas · Finance Tool</div>
+      <h1>Sales Forecast <em>Simulator</em></h1>
+      <p class="lede">A CFO-grade planning model. Enter where sales stand today and the assumptions you want to test — the simulator projects revenue forward across a conservative, base, and optimistic case, so you can see the range, not just a single number.</p>
+      <div class="byline">
+        <span><b>Model:</b> Compound period-on-period growth</span>
+        <span><b>Use:</b> Any industry · any currency</span>
+        <span><b>Output:</b> Run-rate · cumulative · CAGR</span>
+      </div>
+    </div>
+  </header>
+
+  <!-- ===== LIGHT WORKING SURFACE ===== -->
+  <main class="wrap">
+    <div class="grid">
+
+      <!-- inputs -->
+      <section class="card" aria-label="Forecast assumptions">
+        <div class="card-title"><span class="dot"></span>Assumptions</div>
+
+        <div class="field">
+          <label for="base">Current sales <span class="hint">— per period, today</span></label>
+          <div class="input-shell">
+            <span class="pre" id="curSym">$</span>
+            <input class="has-pre" type="number" id="base" value="100000" min="0" step="any" inputmode="decimal">
+          </div>
+        </div>
+
+        <div class="row2">
+          <div class="field">
+            <label for="growth">Growth rate</label>
+            <div class="input-shell">
+              <input class="has-suf" type="number" id="growth" value="8" step="any" inputmode="decimal">
+              <span class="suf">% / pd</span>
+            </div>
+          </div>
+          <div class="field">
+            <label for="periods">Periods</label>
+            <div class="input-shell">
+              <input type="number" id="periods" value="12" min="1" max="120" step="1" inputmode="numeric">
+            </div>
+          </div>
+        </div>
+
+        <div class="field">
+          <label>Period length</label>
+          <div class="seg" id="periodSeg" role="group" aria-label="Period length">
+            <button data-pp="12" data-unit="Month">Monthly</button>
+            <button data-pp="4" data-unit="Quarter">Quarterly</button>
+            <button class="active" data-pp="1" data-unit="Year">Yearly</button>
+          </div>
+        </div>
+
+        <div class="row2">
+          <div class="field">
+            <label for="currency">Currency</label>
+            <select id="currency">
+              <option value="$|en-US">USD ($)</option>
+              <option value="AED |en-AE">AED (د.إ)</option>
+              <option value="€|de-DE">EUR (€)</option>
+              <option value="£|en-GB">GBP (£)</option>
+              <option value="₹|en-IN">INR (₹)</option>
+              <option value="¥|ja-JP">JPY (¥)</option>
+              <option value="$|en-AU">AUD ($)</option>
+              <option value="SAR |ar-SA">SAR</option>
+            </select>
+          </div>
+          <div class="field">
+            <label for="sens">Sensitivity <span class="hint">±</span></label>
+            <div class="input-shell">
+              <input class="has-suf" type="number" id="sens" value="3" min="0" step="any" inputmode="decimal">
+              <span class="suf">pts</span>
+            </div>
+          </div>
+        </div>
+
+        <details>
+          <summary>Advanced assumptions</summary>
+          <div class="field">
+            <label for="decel">Growth drift <span class="hint">— change each period</span></label>
+            <div class="input-shell">
+              <input class="has-suf" type="number" id="decel" value="0" step="any" inputmode="decimal">
+              <span class="suf">pts/pd</span>
+            </div>
+          </div>
+          <div class="field">
+            <label for="churn">Churn / attrition <span class="hint">— drag on growth</span></label>
+            <div class="input-shell">
+              <input class="has-suf" type="number" id="churn" value="0" min="0" step="any" inputmode="decimal">
+              <span class="suf">% / pd</span>
+            </div>
+          </div>
+          <p class="note">Drift bends the curve: a negative value tapers growth as the base gets larger (realistic at scale); a positive value models an accelerating ramp. Churn is subtracted from net growth every period.</p>
+        </details>
+
+        <button class="reset" id="reset">Reset to defaults</button>
+      </section>
+
+      <!-- results -->
+      <div class="results">
+
+        <div class="kpis">
+          <div class="kpi"><div class="k-label">Ending run-rate</div><div class="k-val" id="kEnd">—</div><div class="k-sub" id="kEndSub">final period, base case</div></div>
+          <div class="kpi"><div class="k-label">Total forecast</div><div class="k-val" id="kTotal">—</div><div class="k-sub" id="kTotalSub">sum over horizon</div></div>
+          <div class="kpi"><div class="k-label">CAGR</div><div class="k-val" id="kCagr">—</div><div class="k-sub">annualized</div></div>
+          <div class="kpi"><div class="k-label">Total uplift</div><div class="k-val" id="kUplift">—</div><div class="k-sub">vs. current run-rate</div></div>
+        </div>
+
+        <div class="chart-card">
+          <div class="chart-head">
+            <div class="card-title" style="margin:0"><span class="dot"></span>Projected sales</div>
+            <div class="legend">
+              <span><span class="swatch" style="background:var(--ink-soft)"></span>Conservative</span>
+              <span><span class="swatch" style="background:var(--gold)"></span>Base case</span>
+              <span><span class="swatch" style="background:var(--gold-bright)"></span>Optimistic</span>
+            </div>
+          </div>
+          <div class="chart-box"><canvas id="chart"></canvas></div>
+        </div>
+
+        <div class="table-card">
+          <div class="card-title"><span class="dot"></span>Period detail · base case</div>
+          <table>
+            <thead>
+              <tr><th>Period</th><th>Sales</th><th>Growth</th><th>Cumulative</th></tr>
+            </thead>
+            <tbody id="tbody"></tbody>
+            <tfoot id="tfoot"></tfoot>
+          </table>
+        </div>
+
+        <p class="note">This simulator applies compounding growth to your current per-period sales. The band reflects your sensitivity setting — the optimistic and conservative cases add and subtract those points from the base growth rate each period. Figures are directional planning estimates, not a guarantee of results.</p>
+      </div>
+    </div>
+  </main>
+
+  <footer>
+    <span>Built by Zainab Abbas · CFO &amp; ACCA</span>
+    <span><a href="https://zainababbas.com" target="_blank" rel="noopener">zainababbas.com →</a></span>
+  </footer>
+
+  <script src="forecast.js"></script>
+</body>
+</html>
