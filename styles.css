@@ -1,3 +1,4 @@
+@import url('https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@500;600;700&family=Inter:wght@400;500;600&display=swap');
 /* ============================================================
    THE BOARDROOM INSIGHTS — shared calculator theme
    Matched to zainababbas.com: Georgia + Arial, gold #D4AF37
@@ -31,8 +32,8 @@
   --neg:#C0563F;
 
   /* fonts (match site) */
-  --serif:Georgia,"Times New Roman",serif;
-  --sans:Arial,Helvetica,sans-serif;
+  --serif:'Cormorant Garamond',Georgia,serif;
+  --sans:'Inter',system-ui,sans-serif;
 
   --radius:15px;
   --max:1180px;
@@ -65,7 +66,7 @@ body{
 .hero-inner{position:relative;z-index:1;max-width:var(--max);margin:0 auto;padding:clamp(34px,6vw,64px) clamp(18px,4vw,40px)}
 .eyebrow{font-family:var(--sans);font-size:11px;letter-spacing:.28em;text-transform:uppercase;color:var(--gold);display:flex;align-items:center;gap:12px;font-weight:700}
 .eyebrow::before{content:'';width:26px;height:1px;background:var(--gold-bright);display:inline-block}
-h1{font-family:var(--sans);font-weight:700;color:var(--cream);font-size:clamp(30px,5.4vw,52px);line-height:1.06;letter-spacing:-.01em;margin:16px 0 12px}
+h1{font-family:var(--serif);font-weight:700;color:var(--cream);font-size:clamp(30px,5.4vw,52px);line-height:1.06;letter-spacing:-.01em;margin:16px 0 12px}
 h1 em{font-style:normal;color:var(--gold-bright)}
 h1::after{content:"";display:block;width:80px;height:4px;background:var(--gold);border-radius:5px;margin-top:18px}
 .lede{color:var(--cream-soft);max-width:64ch;font-size:clamp(14px,1.7vw,16px)}
@@ -203,7 +204,7 @@ footer a:hover{text-decoration:underline}
 .tool-card{border-top:5px solid var(--gold)}
 .tool-card:hover{transform:translateY(-5px);box-shadow:0 12px 32px rgba(0,0,0,.12)}
 .tool-card .tc-num{font-size:11px;letter-spacing:.16em;color:var(--gold-deep);font-weight:700}
-.tool-card h3{font-family:var(--sans);font-weight:700;font-size:22px;line-height:1.15;color:var(--ink);margin:10px 0 10px}
+.tool-card h3{font-family:var(--serif);font-weight:700;font-size:22px;line-height:1.15;color:var(--ink);margin:10px 0 10px}
 .tool-card p{font-size:13.5px;color:var(--ink-soft);line-height:1.55;flex:1}
 .tool-card .tc-tags{display:flex;flex-wrap:wrap;gap:6px;margin:16px 0 18px}
 .tool-card .tc-tags span{font-size:10px;letter-spacing:.02em;color:var(--gold-deep);background:var(--gold-soft);padding:4px 9px;border-radius:20px;font-weight:700}
